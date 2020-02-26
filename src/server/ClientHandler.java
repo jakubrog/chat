@@ -5,41 +5,40 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientHandler implements Runnable {
-        private Socket clientSocket;
+        private Client client;
         private PrintWriter out;
         private BufferedReader in;
         private BlockingQueue<Message> msgQueue;
 
-        public ClientHandler(Socket socket, BlockingQueue<Message> msgQueue) {
-            this.clientSocket = socket;
+        public ClientHandler(Client client, BlockingQueue<Message> msgQueue) {
+            this.client = client;
             this.msgQueue = msgQueue;
         }
 
         public void run() {
             try {
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
+                out = new PrintWriter(client.getSocket().getOutputStream(), true);
 
                 in = new BufferedReader(
-                        new InputStreamReader(clientSocket.getInputStream()));
+                        new InputStreamReader(client.getSocket().getInputStream()));
 
                 String inputLine = in.readLine();
                 while (inputLine != null) {
-                    if ("quit()".equals(inputLine.trim())) {
-                        msgQueue.add(new Message("quit()", clientSocket));
+                    if ("quit()".equals(inputLine.toLowerCase().trim())) {
+                        msgQueue.add(new Message( client, "quit()", MessageType.TCP_MESSAGE));
                         out.println("bye");
                         break;
                     }
-                    msgQueue.put(new Message(inputLine, clientSocket));
+                    msgQueue.put(new Message(client, inputLine, MessageType.TCP_MESSAGE));
                     inputLine = in.readLine();
                 }
 
                 in.close();
                 out.close();
-                clientSocket.close();
+                client.close();
 
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
