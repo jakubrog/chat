@@ -18,8 +18,6 @@ public class Server {
     private static final int PORT = 1234;
     private ServerSocket serverSocket;
     private DatagramSocket datagramSocket;
-    private byte[] receiveBuffer;
-
     private BlockingQueue<Message> msgQueue = new LinkedBlockingQueue<>();
     private List<Client> clients = new CopyOnWriteArrayList<>();
     private ExecutorService executor = newCachedThreadPool();
@@ -33,7 +31,10 @@ public class Server {
 
         serverSocket = new ServerSocket(port);
         datagramSocket = new DatagramSocket(port);
-        new Thread(new MessagesSender(msgQueue, clients)).start();
+
+        new Thread(new MessagesSender(msgQueue, clients, datagramSocket)).start();
+        new Thread(new ClientUDPHandler(datagramSocket, msgQueue)).start();
+
         while (true) {
             Socket socket = serverSocket.accept();
             executor.submit(() -> authenticateClient(socket));
@@ -41,7 +42,7 @@ public class Server {
     }
 
     private void authenticateClient(Socket socket)  {
-        receiveBuffer = new byte[1024];
+        byte[] receiveBuffer = new byte[1024];
         System.out.println("Trying to authenticate");
         while(true){
             DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
@@ -58,7 +59,7 @@ public class Server {
                 scan.useDelimiter(" : ");
                 scan.next();
                 String nickname = scan.next();
-                Client client = new Client(socket, datagramSocket, nickname);
+                Client client = new Client(socket, nickname, receivePacket.getAddress(), receivePacket.getPort());
                 clients.add(client);
                 executor.submit(new ClientHandler(client, msgQueue));
                 System.out.println("Client connected with nickname : " + nickname);

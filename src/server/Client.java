@@ -1,23 +1,32 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramSocket;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
-// TODO: keep address and port to send message via UDP, datagramsocket is not necessary
 public class Client {
-    private DatagramSocket datagramSocket;
     private Socket socket;
     private String nickname;
+    private InetAddress address;
+    private PrintWriter out;
+    private BufferedReader in;
+    private int port;
 
-    public Client(Socket socket, DatagramSocket datagramSocket, String nickname) {
-        this.datagramSocket = datagramSocket;
+    public Client(Socket socket, String nickname, InetAddress address, int portUDP) {
+        this.address = address;
+        this.port = portUDP;
         this.socket = socket;
         this.nickname = nickname;
-    }
 
-    public DatagramSocket getDatagramSocket() {
-        return datagramSocket;
+        try {
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Socket getSocket() {
@@ -25,10 +34,29 @@ public class Client {
     }
 
     public void close() throws IOException {
-        datagramSocket.close();
+        in.close();
+        out.close();
         socket.close();
     }
 
+    public String getNickname() {
+        return nickname;
+    }
 
+    public InetAddress getAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public PrintWriter getPrintWriterOut() {
+        return out;
+    }
+
+    public BufferedReader getBufferedReaderIn() {
+        return in;
+    }
 }
 
