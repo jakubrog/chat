@@ -26,19 +26,23 @@ public class ClientUDPHandler implements Runnable {
             while(true) {
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 socket.receive(receivePacket);
-                Client sender = clients
-                        .stream()
-                        .filter(e -> receivePacket.getAddress() == e.getAddress() && receivePacket.getPort() == e.getPort())
-                        .collect(Collectors.toList())
-                        .get(0);
+                String msg = new String(receivePacket.getData(), 0, receivePacket.getLength());
+                if(!isAuthenticateMessage(msg)) {
+                    List<Client> sender = clients
+                            .stream()
+                            .filter(e -> receivePacket.getAddress() == e.getAddress() && receivePacket.getPort() == e.getPort())
+                            .collect(Collectors.toList());
 
-                if(sender != null) {
-                    String msg = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                    msgQueue.put(new Message(sender, msg, MessageType.UDP_MESSAGE));
+                    if (!sender.isEmpty()) {
+                        msgQueue.put(new Message(sender.get(0), msg, MessageType.UDP_MESSAGE));
+                    }
                 }
             }
         }catch(IOException | InterruptedException e){
             e.printStackTrace();
         }
+    }
+    public boolean isAuthenticateMessage(String message){
+        return message.contains("authenticate client with nickname : ");
     }
 }

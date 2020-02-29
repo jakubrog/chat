@@ -4,74 +4,81 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.Socket;
+import java.net.*;
+import java.util.Scanner;
 
 public class Client {
-    private Socket clientSocket;
+    private Socket socket;
+    private DatagramSocket datagramSocket;
     private PrintWriter out;
     private BufferedReader in;
+    private final static String IP = "localhost";
+    private final static int PORT = 1234;
 
     public static void main(String [] args) throws IOException, InterruptedException {
-//        Client c1 = new Client();
-//        Client c2 = new Client();
-//        c1.startConnection("localhost", 1234);
-//        Thread.sleep(2000);
-//        System.out.println("S2");
-//        c2.startConnection("localhost", 1234);
-//        System.out.println("connected");
-//        Thread t1 = new Thread(() -> {
-//            try {
-//                c1.sendMessage(1, "Hello c2");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        Thread t2 = new Thread(() -> {
-//            try {
-//                c2.sendMessage(2, "Hello c1");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
-//        t1.start();
-//        t2.start();
-//        t1.join();
-//        t2.join();
+        Client client = new Client();
+        System.out.println("Enter your nickname: ");
+        Scanner scanner = new Scanner(System.in);
+        client.startConnection(scanner.next());
+        MessageHandler messageHandler = new MessageHandler(client.getSocket(), client.getDatagramSocket());
+        messageHandler.readMessages();
+        while(true){
+            System.out.print("You: ");
+            scanner = new Scanner(System.in).useDelimiter("\n");
+            String message = scanner.next();
 
-        Client c1 = new Client();
-        c1.startConnection("localhost", 1234);
-        Thread.sleep(10000);
-        c1.stopConnection();
-//        c2.stopConnection();
+            if(message.trim().toLowerCase().equals("quit()"))
+                break;
+            messageHandler.send(message);
+        }
+        client.stopConnection();
     }
 
-    public void startConnection(String ip, int port) throws IOException, InterruptedException {
-        DatagramSocket datagramSocket = new DatagramSocket();
+    public void startConnection(String nick) throws IOException, InterruptedException{
+        startConnection(IP, PORT, nick);
+    }
 
-        clientSocket = new Socket(ip, port);
-        out = new PrintWriter(clientSocket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+    public void startConnection(String ip, int port, String nick) throws IOException, InterruptedException {
+        establishTCPConnection(ip, port);
+        // wait some time to establish TCP connection
         Thread.sleep(1000);
-
-        InetAddress address = InetAddress.getByName("localhost");
-        byte[] sendBuffer = "authenticate client with nickname : xxx".getBytes();
-        DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
-        datagramSocket.send(sendPacket);
+        // authenticate client
+        authenticateClient(ip, port, nick);
+        // wait to connect
+        Thread.sleep(1000);
+    }
+    private void establishTCPConnection(String ip, int port) throws IOException {
+        socket = new Socket(ip, port);
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
-    public String sendMessage(int id, String msg) throws IOException {
-        out.println(msg);
-        String resp = in.readLine();
-        System.out.println(id + resp);
-        return resp;
+    private void authenticateClient(String ip, int port, String nickname) throws IOException {
+        datagramSocket = new DatagramSocket();
+        InetAddress address = InetAddress.getByName(ip);
+        byte[] sendBuffer = ("authenticate client with nickname : " + nickname).getBytes();
+        DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
+        for(int i = 0; i < 3; i++) {
+            datagramSocket.send(sendPacket);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void stopConnection() throws IOException {
         in.close();
         out.close();
-        clientSocket.close();
+        socket.close();
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public DatagramSocket getDatagramSocket() {
+        return datagramSocket;
     }
 }

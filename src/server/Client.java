@@ -58,5 +58,13 @@ public class Client {
     public BufferedReader getBufferedReaderIn() {
         return in;
     }
+
+    @Override
+    public boolean equals(Object other){
+        if(other instanceof Client){
+            return ((Client) other).getNickname().equals(this.nickname);
+        }
+        return false;
+    }
 }
 

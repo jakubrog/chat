@@ -32,8 +32,8 @@ public class Server {
         serverSocket = new ServerSocket(port);
         datagramSocket = new DatagramSocket(port);
 
-        new Thread(new MessagesSender(msgQueue, clients, datagramSocket)).start();
-        new Thread(new ClientUDPHandler(datagramSocket, msgQueue)).start();
+        new Thread(new MessageSender(msgQueue, clients, datagramSocket)).start();
+        new Thread(new ClientUDPHandler(datagramSocket, msgQueue, clients)).start();
 
         while (true) {
             Socket socket = serverSocket.accept();
@@ -61,7 +61,7 @@ public class Server {
                 String nickname = scan.next();
                 Client client = new Client(socket, nickname, receivePacket.getAddress(), receivePacket.getPort());
                 clients.add(client);
-                executor.submit(new ClientHandler(client, msgQueue));
+                executor.submit(new ClientTCPHandler(client, msgQueue));
                 System.out.println("Client connected with nickname : " + nickname);
                 return;
             }

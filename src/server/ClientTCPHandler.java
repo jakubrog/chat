@@ -2,25 +2,22 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
-public class ClientHandler implements Runnable {
+public class ClientTCPHandler implements Runnable {
         private Client client;
-        private PrintWriter out;
         private BufferedReader in;
         private BlockingQueue<Message> msgQueue;
 
-        public ClientHandler(Client client, BlockingQueue<Message> msgQueue) {
+        public ClientTCPHandler(Client client, BlockingQueue<Message> msgQueue) {
             this.client = client;
             this.msgQueue = msgQueue;
+            this.in = client.getBufferedReaderIn();
         }
 
         public void run() {
             try {
-                in = client.getBufferedReaderIn();
-
                 String inputLine = in.readLine();
                 while (inputLine != null) {
                     if ("quit()".equals(inputLine.toLowerCase().trim())) {
