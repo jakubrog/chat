@@ -13,14 +13,15 @@ public class Client {
     private PrintWriter out;
     private BufferedReader in;
     private final static String IP = "localhost";
-    private final static int PORT = 1234;
+    public final static int PORT = 1234;
 
     public static void main(String [] args) throws IOException, InterruptedException {
         Client client = new Client();
         System.out.println("Enter your nickname: ");
         Scanner scanner = new Scanner(System.in);
-        client.startConnection(scanner.next());
-        MessageHandler messageHandler = new MessageHandler(client.getSocket(), client.getDatagramSocket());
+        String nickname = scanner.next();
+        client.startConnection(nickname);
+        MessageHandler messageHandler = new MessageHandler(client.getSocket(), client.getDatagramSocket(), nickname);
         messageHandler.readMessages();
         while(true){
             System.out.print("You: ");
@@ -54,7 +55,7 @@ public class Client {
     }
 
     private void authenticateClient(String ip, int port, String nickname) throws IOException {
-        datagramSocket = new DatagramSocket();
+        datagramSocket = new DatagramSocket(3002);
         InetAddress address = InetAddress.getByName(ip);
         byte[] sendBuffer = ("authenticate client with nickname : " + nickname).getBytes();
         DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);

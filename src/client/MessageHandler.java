@@ -4,20 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.Scanner;
 
 public class MessageHandler {
     private BufferedReader in;
-    private Socket socket;
     private DatagramSocket datagramSocket;
     private Thread readTCP = new Thread(this::readTCPMessage);
     private Thread readUDP = new Thread(this::readUDPMessage);
     private  PrintWriter out;
+    private String nickname;
 
-    public MessageHandler(Socket socket, DatagramSocket datagramSocket){
+    public MessageHandler(Socket socket, DatagramSocket datagramSocket, String nickname){
+        this.nickname = nickname;
         try {
             this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.out = new PrintWriter(socket.getOutputStream(), true);
@@ -78,7 +77,20 @@ public class MessageHandler {
     }
 
     private void sendViaUDP(String message){
+        InetAddress address = null;
+        try {
+            address = InetAddress.getByName("localhost");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        };
 
+        byte[] sendBuffer = (nickname + ";" + message).getBytes();
+        DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, Client.PORT);
+        try {
+            datagramSocket.send(sendPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void sendViaTCP(String message){

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
@@ -27,14 +28,23 @@ public class ClientUDPHandler implements Runnable {
                 DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
                 socket.receive(receivePacket);
                 String msg = new String(receivePacket.getData(), 0, receivePacket.getLength());
-                if(!isAuthenticateMessage(msg)) {
-                    List<Client> sender = clients
-                            .stream()
-                            .filter(e -> receivePacket.getAddress() == e.getAddress() && receivePacket.getPort() == e.getPort())
-                            .collect(Collectors.toList());
+                Scanner msgScan = new Scanner(msg);
+                msgScan.useDelimiter(";");
 
-                    if (!sender.isEmpty()) {
-                        msgQueue.put(new Message(sender.get(0), msg, MessageType.UDP_MESSAGE));
+                if(msgScan.hasNext()) {
+                    String senderNickname = msgScan.next();
+                    Client sender = null;
+                    for(Client client : clients) {
+                        if (client.getNickname().equals(senderNickname)) {
+                            sender = client;
+                            break;
+                        }
+                    }
+
+
+                    if (sender != null && msgScan.hasNext()) {
+                        System.out.println("Received UDP from client " + sender.getNickname());
+                        msgQueue.put(new Message(sender, msgScan.next(), MessageType.UDP_MESSAGE));
                     }
                 }
             }
