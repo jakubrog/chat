@@ -56,6 +56,7 @@ public class MessageSender implements Runnable {
 
     private void sendViaTCP(Client destination, Message message){
         destination.getPrintWriterOut().println(message.getContext());
+
     }
 
     private void sendViaUDP(Client destination, Message message) throws IOException {

@@ -2,10 +2,10 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client {
     private Socket socket;
@@ -15,18 +15,13 @@ public class Client {
     private BufferedReader in;
     private int port;
 
-    public Client(Socket socket, String nickname, InetAddress address, int portUDP) {
-        this.address = address;
+    public Client(Socket socket, String nickname, String address, int portUDP, PrintWriter out, BufferedReader in ) throws UnknownHostException {
+        this.address = InetAddress.getByName(address);
         this.port = portUDP;
         this.socket = socket;
         this.nickname = nickname;
-
-        try {
-            this.out = new PrintWriter(socket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.out = out;
+        this.in = in;
     }
 
     public Socket getSocket() {

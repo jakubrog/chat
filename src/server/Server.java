@@ -1,10 +1,10 @@
 package server;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.*;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -42,31 +42,42 @@ public class Server {
     }
 
     private void authenticateClient(Socket socket)  {
-        byte[] receiveBuffer = new byte[1024];
         System.out.println("Trying to authenticate");
-        while(true){
-            DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
-            try {
-                datagramSocket.receive(receivePacket);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String msg = new String(receivePacket.getData(), 0, receivePacket.getLength());
-            if(msg.contains("authenticate client with nickname : ")
-                    && socket.getInetAddress().equals(receivePacket.getAddress())) {
-
-                Scanner scan = new Scanner(msg);
-                scan.useDelimiter(" : ");
-                scan.next();
-                String nickname = scan.next();
-                Client client = new Client(socket, nickname, receivePacket.getAddress(), receivePacket.getPort());
-                clients.add(client);
-                executor.submit(new ClientTCPHandler(client, msgQueue));
-                System.out.println("Client connected with nickname : " + nickname);
-                return;
-            }
+        BufferedReader out = null;
+        PrintWriter in = null;
+        String authMessage = null;
+        try {
+            out = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            in = new PrintWriter(socket.getOutputStream(), true);
+            authMessage = out.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        if(out == null || in == null || authMessage == null) {
+            System.out.println("Cannot connect");
+            return;
+        }
+
+        Scanner conf = new Scanner(authMessage).useDelimiter(";");
+        String nickname = conf.next();
+        String address = conf.next().substring(1);
+        int port = Integer.parseInt(conf.next());
+        Client client = null;
+        try {
+            client = new Client(socket, nickname, address, port, in, out);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        if(client == null) {
+            System.out.println("Cannot connect");
+            return;
+        }
+        clients.add(client);
+        executor.submit(new ClientTCPHandler(client, msgQueue));
+        in.println("OK");
+        System.out.println("Connected " + client.getNickname());
     }
+
 
     public void stop() throws IOException {
         serverSocket.close();

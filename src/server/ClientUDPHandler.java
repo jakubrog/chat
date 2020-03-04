@@ -1,15 +1,12 @@
 package server;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
-import java.util.stream.Collectors;
 
-// TODO: how to find who has send this message
 public class ClientUDPHandler implements Runnable {
     private DatagramSocket socket;
     private BlockingQueue<Message> msgQueue;
@@ -41,18 +38,16 @@ public class ClientUDPHandler implements Runnable {
                         }
                     }
 
-
                     if (sender != null && msgScan.hasNext()) {
                         System.out.println("Received UDP from client " + sender.getNickname());
                         msgQueue.put(new Message(sender, msgScan.next(), MessageType.UDP_MESSAGE));
                     }
+
                 }
             }
         }catch(IOException | InterruptedException e){
             e.printStackTrace();
         }
     }
-    public boolean isAuthenticateMessage(String message){
-        return message.contains("authenticate client with nickname : ");
-    }
+
 }

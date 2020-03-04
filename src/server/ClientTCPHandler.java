@@ -19,6 +19,7 @@ public class ClientTCPHandler implements Runnable {
         public void run() {
             try {
                 String inputLine = in.readLine();
+                System.out.println("received");
                 while (inputLine != null) {
                     if ("quit()".equals(inputLine.toLowerCase().trim())) {
                         msgQueue.add(new Message( client, "quit()", MessageType.TCP_MESSAGE));
@@ -26,7 +27,9 @@ public class ClientTCPHandler implements Runnable {
                         break;
                     }
                     msgQueue.put(new Message(client, inputLine, MessageType.TCP_MESSAGE));
+                    System.out.println("second");
                     inputLine = in.readLine();
+                    System.out.println("received");
                 }
 
                 client.close();

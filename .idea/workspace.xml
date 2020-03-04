@@ -5,7 +5,11 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/MessageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/MessageSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MessageSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Server.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -107,7 +111,9 @@
       <workItem from="1582736458881" duration="4893000" />
       <workItem from="1582838092736" duration="2072000" />
       <workItem from="1582995288967" duration="6727000" />
-      <workItem from="1583156690357" duration="1293000" />
+      <workItem from="1583156690357" duration="1483000" />
+      <workItem from="1583231046102" duration="5142000" />
+      <workItem from="1583340953601" duration="236000" />
     </task>
     <servers />
   </component>
