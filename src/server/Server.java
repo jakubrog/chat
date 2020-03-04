@@ -75,7 +75,7 @@ public class Server {
         clients.add(client);
         executor.submit(new ClientTCPHandler(client, msgQueue));
         in.println("OK");
-        System.out.println("Connected " + client.getNickname());
+        System.out.println("Client " + client.getNickname() + " connected");
     }
 
 

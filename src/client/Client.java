@@ -8,62 +8,65 @@ import java.net.*;
 import java.util.Random;
 import java.util.Scanner;
 
-// TODO: define multicast port
-
-
 public class Client {
     private final static String IP = "localhost";
-    public final static int SERVER_PORT = 1234;
+    final static String MULTICAST_ADDRESS = "230.0.0.0";
+    final static int SERVER_PORT = 1234;
     private final int PORT;
-    public final int MULTI_PORT;
-    public final static String MULTICAST_ADDRESS = "230.0.0.0";
     private Socket socket;
     private DatagramSocket datagramSocket;
     private MulticastSocket multicastSocket;
     private PrintWriter out;
     private BufferedReader in;
+    private String nickname;
+    private boolean loop = true;
 
+    public static void main(String [] args) throws IOException, InterruptedException {
+        new Client(3000 + new Random().nextInt(1000)).start();
+    }
 
     public Client(int port) throws IOException {
         this.PORT = port;
-        this.MULTI_PORT = PORT;
-        this.datagramSocket = new DatagramSocket(PORT, InetAddress.getByName(IP));
-        this.multicastSocket = new MulticastSocket(10000);
-        multicastSocket.joinGroup(InetAddress.getByName(MULTICAST_ADDRESS));
     }
 
-    public static void main(String [] args) throws IOException, InterruptedException {
-        Client client = new Client(1024 + new Random().nextInt(5000));
-        System.out.println("Enter your nickname: ");
-        Scanner scanner = new Scanner(System.in);
-        String nickname = scanner.next();
-        client.startConnection(nickname);
-        MessageHandler messageHandler = new MessageHandler(client.getSocket(), client.getDatagramSocket(), client.getMulticastSocket(), nickname);
-        messageHandler.readMessages();
-        while(true){
+    public void start() throws IOException {
+        setNickname();
+        try {
+            startConnection(IP, SERVER_PORT);
+        }catch (IOException e){
+            System.out.println("Cannot connect to server");
+            return;
+        }
+        MessageHandler messageHandler = new MessageHandler(this);
+        messageHandler.startReading();
+        Scanner scanner;
+        while(loop){
             System.out.print("You: ");
             scanner = new Scanner(System.in).useDelimiter("\n");
             String message = scanner.next();
-
-            if(message.trim().toLowerCase().equals("quit()"))
-                break;
             messageHandler.send(message);
+
+            if(message.trim().toLowerCase().equals("quit()")) {
+                messageHandler.close();
+                stopConnection();
+                break;
+            }
         }
-        client.stopConnection();
+        System.out.println("Client disconnected");
     }
 
-    public void startConnection(String nick) throws IOException, InterruptedException{
-        startConnection(IP, SERVER_PORT, nick);
+    public void setNickname(){
+        System.out.println("Enter your nickname: ");
+        Scanner scanner = new Scanner(System.in);
+        this.nickname = scanner.next();
     }
 
-    public void startConnection(String ip, int port, String nick) throws IOException, InterruptedException {
+    public void startConnection(String ip, int port) throws IOException {
+        datagramSocket = new DatagramSocket(PORT, InetAddress.getByName(IP));
+        multicastSocket = new MulticastSocket(10000);
+        multicastSocket.joinGroup(InetAddress.getByName(MULTICAST_ADDRESS));
         establishTCPConnection(ip, port);
-        authenticateClient(nick);
-    }
-    private void establishTCPConnection(String ip, int port) throws IOException {
-        socket = new Socket(ip, port);
-        out = new PrintWriter(socket.getOutputStream(), true);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        authenticateClient(nickname);
     }
 
     private void authenticateClient(String nickname) throws IOException {
@@ -76,12 +79,20 @@ public class Client {
         System.out.println("Problems with authorization");
     }
 
+    private void establishTCPConnection(String ip, int port) throws IOException {
+        socket = new Socket(ip, port);
+        out = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    }
+
     public void stopConnection() throws IOException {
+        loop = false;
         in.close();
         out.close();
         socket.close();
         multicastSocket.leaveGroup(InetAddress.getByName(MULTICAST_ADDRESS));
         multicastSocket.close();
+        datagramSocket.close();
     }
 
     public Socket getSocket() {
@@ -94,5 +105,9 @@ public class Client {
 
     public MulticastSocket getMulticastSocket() {
         return multicastSocket;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 }

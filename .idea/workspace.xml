@@ -2,13 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7ff6d794-fef9-4c7e-8108-28eba6115b55" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/client/Authenticator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/MessageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MessageReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageReceiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MessageSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/MessageSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MessageSender.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MessageType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Server.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -113,7 +117,7 @@
       <workItem from="1582995288967" duration="6727000" />
       <workItem from="1583156690357" duration="1483000" />
       <workItem from="1583231046102" duration="5142000" />
-      <workItem from="1583340953601" duration="236000" />
+      <workItem from="1583340953601" duration="5386000" />
     </task>
     <servers />
   </component>

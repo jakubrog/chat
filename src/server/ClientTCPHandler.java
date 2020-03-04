@@ -2,7 +2,6 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientTCPHandler implements Runnable {
@@ -19,17 +18,14 @@ public class ClientTCPHandler implements Runnable {
         public void run() {
             try {
                 String inputLine = in.readLine();
-                System.out.println("received");
                 while (inputLine != null) {
                     if ("quit()".equals(inputLine.toLowerCase().trim())) {
-                        msgQueue.add(new Message( client, "quit()", MessageType.TCP_MESSAGE));
-                        client.getPrintWriterOut().println("bye");
+                        msgQueue.add(new Message( client, "quit()", MessageType.QUIT_MESSAGE));
+                        System.out.println("Client " + client.getNickname() + " disconnected");
                         break;
                     }
                     msgQueue.put(new Message(client, inputLine, MessageType.TCP_MESSAGE));
-                    System.out.println("second");
                     inputLine = in.readLine();
-                    System.out.println("received");
                 }
 
                 client.close();

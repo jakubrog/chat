@@ -28,9 +28,10 @@ public class MessageSender implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if(isQuit(message) ){
+
+            if(message != null && message.getMessageType() == MessageType.QUIT_MESSAGE){
                 clients.remove(message.getSender());
-            } else{
+            } else {
                 send(message);
             }
         }
@@ -41,7 +42,7 @@ public class MessageSender implements Runnable {
     }
 
     private void send(Client destination, Message message){
-        if(destination.equals(message.getSender()))
+        if(message == null || destination.equals(message.getSender()))
             return;
         try {
             if(message.getMessageType() == MessageType.TCP_MESSAGE) {
@@ -69,8 +70,4 @@ public class MessageSender implements Runnable {
         datagramSocket.send(sendPacket);
     }
 
-
-    private boolean isQuit(Message message){
-        return message.getContext().equals("quit()");
-    }
 }

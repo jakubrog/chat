@@ -37,9 +37,7 @@ public class ClientUDPHandler implements Runnable {
                             break;
                         }
                     }
-
                     if (sender != null && msgScan.hasNext()) {
-                        System.out.println("Received UDP from client " + sender.getNickname());
                         msgQueue.put(new Message(sender, msgScan.next(), MessageType.UDP_MESSAGE));
                     }
 
