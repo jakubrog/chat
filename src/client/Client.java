@@ -34,17 +34,22 @@ public class Client {
         try {
             startConnection(IP, SERVER_PORT);
         }catch (IOException e){
-            System.out.println("Cannot connect to server");
+            System.err.println("Cannot connect to server");
             return;
         }
         MessageHandler messageHandler = new MessageHandler(this);
         messageHandler.startReading();
         Scanner scanner;
+
         while(loop){
             System.out.print("You: ");
             scanner = new Scanner(System.in).useDelimiter("\n");
             String message = scanner.next();
-            messageHandler.send(message);
+            if(message.startsWith("UFILE")) {
+                messageHandler.sendFileMessage(message.substring("UFILE".length()).trim());
+            }else{
+                messageHandler.send(message);
+            }
 
             if(message.trim().toLowerCase().equals("quit()")) {
                 messageHandler.close();
@@ -52,7 +57,7 @@ public class Client {
                 break;
             }
         }
-        System.out.println("Client disconnected");
+        System.err.println("Client disconnected");
     }
 
     public void setNickname(){
@@ -66,17 +71,7 @@ public class Client {
         multicastSocket = new MulticastSocket(10000);
         multicastSocket.joinGroup(InetAddress.getByName(MULTICAST_ADDRESS));
         establishTCPConnection(ip, port);
-        authenticateClient(nickname);
-    }
-
-    private void authenticateClient(String nickname) throws IOException {
-        out.println(nickname + ";" + datagramSocket.getLocalAddress()  +  ";" + datagramSocket.getLocalPort());
-        String response = in.readLine();
-        if(response.equals("OK")) {
-            System.out.println("Successfully connected");
-            return;
-        }
-        System.out.println("Problems with authorization");
+        new Authenticator(this).authenticateWithNickname(nickname);
     }
 
     private void establishTCPConnection(String ip, int port) throws IOException {
@@ -90,7 +85,6 @@ public class Client {
         in.close();
         out.close();
         socket.close();
-        multicastSocket.leaveGroup(InetAddress.getByName(MULTICAST_ADDRESS));
         multicastSocket.close();
         datagramSocket.close();
     }
@@ -109,5 +103,13 @@ public class Client {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public PrintWriter getOut() {
+        return out;
+    }
+
+    public BufferedReader getIn() {
+        return in;
     }
 }

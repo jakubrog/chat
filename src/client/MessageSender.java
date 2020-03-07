@@ -7,21 +7,15 @@ import java.io.PrintWriter;
 import java.net.*;
 
 public class MessageSender {
-    private String nickname;
     private DatagramSocket datagramSocket;
     private MulticastSocket multicastSocket;
-    private PrintWriter out;
     private MessageHandler handler;
+    private Client client;
 
     public MessageSender(Client client, MessageHandler handler) {
-        this.nickname = client.getNickname();
         this.datagramSocket = client.getDatagramSocket();
         this.multicastSocket = client.getMulticastSocket();
-        try {
-            this.out = new PrintWriter(client.getSocket().getOutputStream(), true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.client = client;
         this.handler = handler;
     }
 
@@ -51,7 +45,7 @@ public class MessageSender {
             e.printStackTrace();
         };
         // use substring(1) to avoid sending U
-        byte[] sendBuffer = (nickname + ";" + message.substring(1).trim()).getBytes();
+        byte[] sendBuffer = (prepareMessage(message)).getBytes();
         DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
         try {
             datagramSocket.send(sendPacket);
@@ -61,7 +55,7 @@ public class MessageSender {
     }
 
     private void sendViaTCP(String message){
-        out.println(message);
+        client.getOut().println(message);
     }
 
     private void sendViaMulticast(String message){
@@ -72,12 +66,16 @@ public class MessageSender {
             e.printStackTrace();
         };
         // using substring(1) to avoid sending U
-        byte[] sendBuffer = (nickname + ";" + message.substring(1).trim()).getBytes();
+        byte[] sendBuffer = (prepareMessage(message)).getBytes();
         DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, multicastSocket.getLocalPort());
         try {
             multicastSocket.send(sendPacket);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String prepareMessage(String message){
+        return client.getNickname() + ";" + message.substring(1).trim();
     }
 }

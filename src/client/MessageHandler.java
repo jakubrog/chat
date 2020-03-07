@@ -1,7 +1,9 @@
 package client;
 
 
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MessageHandler {
@@ -46,6 +48,23 @@ public class MessageHandler {
                 return MessageType.QUIT;
             default:
                 return MessageType.TCP;
+        }
+    }
+    public void sendFileMessage(String path){
+        StringBuilder message = new StringBuilder();
+        try (FileReader reader = new FileReader(path);
+             BufferedReader br = new BufferedReader(reader)) {
+
+            // read line by line
+            String line;
+            message.append("\n");
+            while ((line = br.readLine()) != null) {
+                message.append(line);
+                message.append("\n");
+            }
+            sender.send(message.toString(), MessageType.UDP);
+        } catch (IOException e) {
+            System.err.format("File reading error");
         }
     }
 }

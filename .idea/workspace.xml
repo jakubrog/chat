@@ -4,16 +4,11 @@
     <list default="true" id="7ff6d794-fef9-4c7e-8108-28eba6115b55" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/src/client/Authenticator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Chat.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Chat.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/MessageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/MessageReceiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageReceiver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/MessageSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/MessageType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientTCPHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/ClientUDPHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/MessageSender.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MessageSender.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/MessageType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/MessageType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/Server.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,11 +39,18 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="client" />
       <recent name="server" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -117,7 +119,8 @@
       <workItem from="1582995288967" duration="6727000" />
       <workItem from="1583156690357" duration="1483000" />
       <workItem from="1583231046102" duration="5142000" />
-      <workItem from="1583340953601" duration="5386000" />
+      <workItem from="1583340953601" duration="5810000" />
+      <workItem from="1583568149401" duration="3873000" />
     </task>
     <servers />
   </component>

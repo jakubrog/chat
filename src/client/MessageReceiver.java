@@ -12,16 +12,12 @@ import java.util.Scanner;
 public class MessageReceiver {
     private DatagramSocket datagramSocket;
     private MulticastSocket multicastSocket;
-    private Socket socket;
-    private String nickname;
     private Client client;
     private boolean loop = true;
 
     public MessageReceiver(Client client) {
         this.datagramSocket = client.getDatagramSocket();
         this.multicastSocket = client.getMulticastSocket();
-        this.socket = client.getSocket();
-        this.nickname = client.getNickname();
         this.client = client;
     }
 
@@ -39,7 +35,7 @@ public class MessageReceiver {
             try {
                 datagramSocket.receive(receivePacket);
             } catch (IOException e) {
-                System.out.println("UDP quit");
+                System.err.println("UDP quit");
                 break;
             }
             message = new String(receivePacket.getData(), 0, receivePacket.getLength());
@@ -48,7 +44,7 @@ public class MessageReceiver {
     }
 
     private void readMultiMessage(){
-        byte[] receiveBuffer = new byte[1024];
+        byte[] receiveBuffer = new byte[2048];
         String received;
         String sender;
         String message = "";
@@ -57,32 +53,27 @@ public class MessageReceiver {
             try {
                 multicastSocket.receive(receivePacket);
             } catch (IOException e) {
-                System.out.println("Multi Quit");
+                System.err.println("Multi Quit");
                 break;
             }
             received = new String(receivePacket.getData(), 0, receivePacket.getLength());
             Scanner scan = new Scanner(received).useDelimiter(";");
             sender = scan.next();
             message = scan.next();
-            if(!sender.equals(nickname)) {
+            if(!sender.equals(client.getNickname())) {
                 printMessage("Multicast - " + sender + ": " + message);
             }
         }
     }
 
     private void readTCPMessage() {
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        BufferedReader in = client.getIn();
         String inputLine = "";
         while(loop && inputLine != null) {
             try {
                 inputLine = in.readLine();
             } catch (IOException e) {
-                System.out.println("TCP quit");
+                System.err.println("TCP quit");
                 break;
             }
             if(inputLine == null){
